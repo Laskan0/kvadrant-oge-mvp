@@ -1,6 +1,6 @@
 # КВАДРАНТ
 
-[Открыть приложение](https://kvadrant-oge-mvp.pages.dev/) · [Исходники](https://github.com/Laskan0/kvadrant-oge-mvp)
+[Открыть MVP v1](https://kvadrant-oge-mvp.pages.dev/) · [Открыть preview v2](https://d86cfd71.kvadrant-oge-mvp.pages.dev/) · [Исходники](https://github.com/Laskan0/kvadrant-oge-mvp)
 
 ![Стартовый экран КВАДРАНТА](./docs/screenshot.png)
 
@@ -64,7 +64,7 @@ SVG-график вычисляется по y = x² − 4x + c с одинак�
 - [Визуальная концепция и сверка](./design/DESIGN.md)
 - [Знакомство v2](./docs/screenshot-v2-briefing.png) · [Практика v2, десктоп](./docs/screenshot-v2-practice.png) · [Практика v2, мобильный экран](./docs/screenshot-v2-practice-mobile.png)
 
-Исходники: [Laskan0/kvadrant-oge-mvp](https://github.com/Laskan0/kvadrant-oge-mvp). Инструкция публикации: [DEPLOY.md](./DEPLOY.md). Сайт: [kvadrant-oge-mvp.pages.dev](https://kvadrant-oge-mvp.pages.dev/). Видео и отчёт будут добавлены на этапе сдачи.
+Исходники: [Laskan0/kvadrant-oge-mvp](https://github.com/Laskan0/kvadrant-oge-mvp), ветка [v2](https://github.com/Laskan0/kvadrant-oge-mvp/tree/v2). Инструкция публикации: [DEPLOY.md](./DEPLOY.md). Production v1: [kvadrant-oge-mvp.pages.dev](https://kvadrant-oge-mvp.pages.dev/); preview v2: [открыть](https://d86cfd71.kvadrant-oge-mvp.pages.dev/). Видео пользователь готовит сам.
 
 ## Сохранённые браузерные проверки
 
