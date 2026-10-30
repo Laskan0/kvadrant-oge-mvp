@@ -26,7 +26,7 @@ export function ComputerMascot({ message, state = 'neutral', expression }: { mes
         </g> : <>
           <rect x="33" y={face === 'thinking' ? 42 : 40} width="7" height={face === 'thinking' ? 10 : 13} rx="3.5" fill="currentColor" />
           <rect x="60" y={face === 'thinking' ? 42 : 40} width="7" height={face === 'thinking' ? 10 : 13} rx="3.5" fill="currentColor" />
-          {face === 'thinking' ? <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M32 34l10 1M59 35l10-2M44 63q6-4 12 0" /></g>
+          {face === 'thinking' ? <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M44 63q6-4 12 0" /><circle cx="72" cy="33" r="2" fill="currentColor" stroke="none" /></g>
             : <path d="M41 59q9 9 18 0" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />}
         </>}
       </svg>

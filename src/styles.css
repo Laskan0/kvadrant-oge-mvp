@@ -296,22 +296,29 @@ button:disabled { cursor: not-allowed; background: #29445b; color: #a4bfd5; box-
 .briefing-dialogue .computer-icon { flex-basis: 116px; width: 116px; height: 116px; }
 .briefing-dialogue .computer p { max-width: none; flex: 1; padding: 18px 20px; border: 1px solid #28516c; border-radius: 9px; background: #081527; }
 .briefing-dialogue .computer strong { margin-bottom: 7px; }
+.briefing-dialogue { animation: lesson-enter .4s cubic-bezier(.2,.75,.25,1) both; }
 .briefing-actions { justify-content: space-between; align-items: center; }
 .briefing-next { min-width: 190px; display: inline-flex; justify-content: center; align-items: center; gap: 15px; background: var(--accent); }
 .briefing-next:hover { background: #ffd08f; }
-.bip-expression-friendly .computer-icon { animation: bip-friendly 3.2s ease-in-out infinite; }
-.bip-expression-thinking .computer-icon { transform: rotate(-3deg); }
-.bip-expression-encouraging .computer-icon { animation: bip-encouraging 2.8s ease-in-out infinite; }
-@keyframes bip-friendly { 50% { transform: translateY(-3px); } }
-@keyframes bip-encouraging { 50% { transform: translateY(-3px) rotate(2deg); } }
-.lesson-guide .computer { position: relative; display: block; min-height: 126px; margin: 12px 0 18px; pointer-events: none; }
-.lesson-guide .computer-icon { position: absolute; top: 0; left: var(--bip-left, 0%); width: 66px; height: 66px; transition: left .65s ease-in-out; animation: bip-friendly 3.2s ease-in-out infinite; }
-.lesson-guide .computer p { position: absolute; top: 76px; left: 0; width: 100%; max-width: none; padding: 10px 14px; border: 1px solid #28516c; border-radius: 8px; background: #0b1e31; }
-.lesson-guide-0 { --bip-left: 0%; }
-.lesson-guide-1 { --bip-left: 21%; }
-.lesson-guide-2 { --bip-left: 48%; }
-.lesson-guide-3 { --bip-left: 79%; }
-.lesson-guide-4 { --bip-left: 38%; }
+.lesson-title { animation: lesson-enter .36s ease-out both; }
+.lesson-stage { animation: lesson-enter .48s cubic-bezier(.2,.75,.25,1) both; }
+.lesson-guide { margin: 12px 0 18px; }
+.lesson-guide .computer { display: flex; align-items: center; gap: 18px; margin: 0; padding: 16px 18px; border: 1px solid #28516c; border-radius: 9px; background: linear-gradient(110deg, #10263b, #0b1e31); pointer-events: none; }
+.lesson-guide .computer-icon { flex: 0 0 66px; width: 66px; height: 66px; }
+.lesson-guide .computer p { flex: 1; max-width: none; margin: 0; padding: 11px 14px; border: 1px solid #28516c; border-radius: 8px; background: #081527; }
+.root-formula-stack { margin-bottom: 18px; }
+.root-intro-guide { max-width: 760px; margin-top: 18px; padding-top: 16px; border-top: 1px solid #28516c; }
+.root-intro-guide .computer, .root-stage-bip .computer { display: flex; align-items: flex-start; gap: 12px; margin: 0; }
+.root-intro-guide .computer-icon, .root-stage-bip .computer-icon { flex: 0 0 54px; width: 54px; height: 54px; }
+.root-intro-guide .computer p, .root-stage-bip .computer p { flex: 1; max-width: none; margin: 0; padding: 10px 12px; border: 1px solid #28516c; border-radius: 8px; background: #081527; font-size: 14px; line-height: 1.5; }
+.root-stages { display: grid; gap: 14px; margin: 18px 0; }
+.root-stage-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(210px, .52fr); align-items: center; gap: 20px; }
+.root-stage-row .root-step { min-height: 100%; padding: 16px 18px; border: 1px solid #28516c; border-left: 3px solid var(--navigation); border-radius: 8px; background: #10263b66; }
+.root-stage-bip { animation: bip-arrive .48s cubic-bezier(.2,.75,.25,1) both; }
+.graph-learning-note { margin: 2px 0 16px; padding: 12px 14px; border-left: 2px solid var(--navigation); border-radius: 0 6px 6px 0; background: #62d9f20d; color: #c7dce9; font-size: 14px; line-height: 1.6; }
+.graph-learning-note::before { content: 'БИП · '; color: var(--navigation); font-weight: 700; }
+@keyframes lesson-enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bip-arrive { from { opacity: 0; transform: translate(18px, 8px); } to { opacity: 1; transform: translate(0, 0); } }
 
 /* Нижняя приборная панель практики; верхняя сцена остаётся большой. */
 .practice-mode .space-scene { height: clamp(390px, 57vh, 650px); }
@@ -350,13 +357,12 @@ button:disabled { cursor: not-allowed; background: #29445b; color: #a4bfd5; box-
   .briefing-actions { flex-direction: row; }
   .briefing-actions > span { display: none; }
   .briefing-actions button { width: auto; flex: 1; min-width: 0; }
-  .lesson-guide .computer { min-height: 122px; }
-  .lesson-guide .computer-icon { width: 58px; height: 58px; }
-  .lesson-guide-0 { --bip-left: 0%; }
-  .lesson-guide-1 { --bip-left: 19%; }
-  .lesson-guide-2 { --bip-left: 41%; }
-  .lesson-guide-3 { --bip-left: 70%; }
-  .lesson-guide-4 { --bip-left: 28%; }
+  .lesson-guide .computer { align-items: flex-start; gap: 12px; padding: 12px; }
+  .lesson-guide .computer-icon { flex-basis: 52px; width: 52px; height: 52px; }
+  .lesson-guide .computer p { padding: 9px 10px; font-size: 13px; }
+  .root-stage-row { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .root-stage-bip { justify-self: end; width: min(100%, 400px); }
+  .root-stage-row .root-step { padding: 14px; }
   .practice-mode .space-scene { height: clamp(320px, 48vh, 460px); }
   .cockpit-dashboard { grid-template-columns: 1fr; }
   .bip-comms { order: 0; }
@@ -372,5 +378,5 @@ button:disabled { cursor: not-allowed; background: #29445b; color: #a4bfd5; box-
   .ship-location-2 { transform: translate(700px, 210px); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .bip-expression-friendly .computer-icon, .bip-expression-encouraging .computer-icon, .lesson-guide .computer-icon { animation: none; }
+  .lesson-title, .lesson-stage, .root-stage-bip, .briefing-dialogue { animation: none; }
 }

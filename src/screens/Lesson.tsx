@@ -22,10 +22,11 @@ export function Lesson({ step, onNext, onBack }: Props) {
       <p className="eyebrow">Калибровка навигации · Шаг {step + 1} из {lessons.length}</p>
       <progress aria-label="Прогресс урока" value={step + 1} max={lessons.length} />
     </div>
-    <h1>{lesson.title}</h1>
-    <div className={`lesson-guide lesson-guide-${step}`}>
+    <h1 className="lesson-title">{lesson.title}</h1>
+    <section className="lesson-stage" key={step} aria-label={`Учебный шаг ${step + 1}`}>
+    {step !== 3 ? <div className={`lesson-guide lesson-guide-${step}`}>
       <ComputerMascot message={feedbackCopy || lesson.description} state={ready ? 'success' : feedback === 'incorrect' || feedback === 'empty' ? 'warning' : 'neutral'} />
-    </div>
+    </div> : null}
 
     {step === 0 ? <div className="lesson-task">
       <div className="coefficient-example">
@@ -64,16 +65,29 @@ export function Lesson({ step, onNext, onBack }: Props) {
         {([3, 4, 5] as const).map((c: GraphC) => <button key={c} className="secondary graph-choice" aria-pressed={state.graphC === c} onClick={() => dispatch({ type: 'GRAPH', value: c })}>c = {c}<span>{state.visited.includes(c) ? 'Просмотрено' : 'Посмотреть'}</span></button>)}
       </div>
       <EquationGraph c={state.graphC} />
+      <p className="graph-learning-note">Меняй значение c и смотри на график: точки пересечения параболы с осью X подскажут, сколько действительных корней уравнения.</p>
       {!ready ? <p className="task-guide">Посмотри все три случая, чтобы продолжить · {state.visited.length}/3</p> : null}
     </div> : null}
 
     {step === 3 ? <div className="lesson-task">
-      <div className="formula-stack">
+      <div className="formula-stack root-formula-stack">
         <MathFormula tex={'x_{1,2}=\\frac{-b\\pm\\sqrt{D}}{2a}'} label="Корни равны: минус b плюс-минус квадратный корень из D, всё делённое на 2a" />
-        {state.revealed >= 1 ? <div className="root-step"><span>1. Подставляем коэффициенты</span><MathFormula tex={'x_{1,2}=\\frac{4\\pm\\sqrt{4}}{2\\cdot1}'} label="x₁,₂ = (4 ± √4) / (2 · 1)" /><p>Здесь −b = −(−4) = 4.</p></div> : null}
-        {state.revealed >= 2 ? <div className="root-step"><span>2. Вычисляем корень и знаменатель</span><MathFormula tex={'\\sqrt{4}=2,\\qquad x_{1,2}=\\frac{4\\pm2}{2}'} label="Квадратный корень из 4 равен 2; x₁,₂ = (4 ± 2) / 2" /></div> : null}
-        {state.revealed >= 3 ? <div className="root-step"><span>3. Получаем два значения</span><MathFormula tex={'x_1=\\frac{4-2}{2}=1'} label="x₁ = (4 − 2) / 2 = 1" /><MathFormula tex={'x_2=\\frac{4+2}{2}=3'} label="x₂ = (4 + 2) / 2 = 3" /></div> : null}
+        {state.revealed === 0 ? <div className="root-intro-guide"><ComputerMascot message="Нажимай кнопку, и мы вместе разберём решение по шагам." expression="thinking" /></div> : null}
       </div>
+      {state.revealed > 0 ? <div className="root-stages" aria-live="polite">
+        {state.revealed >= 1 ? <div className="root-stage-row" key="substitution">
+          <div className="root-step"><span>1. Подставляем коэффициенты</span><MathFormula tex={'x_{1,2}=\\frac{4\\pm\\sqrt{4}}{2\\cdot1}'} label="x₁,₂ = (4 ± √4) / (2 · 1)" /><p>Здесь −b = −(−4) = 4.</p></div>
+          {state.revealed === 1 ? <div className="root-stage-bip" key="bip-1"><ComputerMascot message="Подставили коэффициенты. Теперь вычислим квадратный корень из D." expression="thinking" /></div> : null}
+        </div> : null}
+        {state.revealed >= 2 ? <div className="root-stage-row" key="simplification">
+          <div className="root-step"><span>2. Вычисляем корень и знаменатель</span><MathFormula tex={'\\sqrt{4}=2,\\qquad x_{1,2}=\\frac{4\\pm2}{2}'} label="Квадратный корень из 4 равен 2; x₁,₂ = (4 ± 2) / 2" /></div>
+          {state.revealed === 2 ? <div className="root-stage-bip" key="bip-2"><ComputerMascot message="Верно: √4 = 2. Осталось разделить оба выражения на 2." expression="friendly" /></div> : null}
+        </div> : null}
+        {state.revealed >= 3 ? <div className="root-stage-row" key="roots">
+          <div className="root-step"><span>3. Получаем два значения</span><MathFormula tex={'x_1=\\frac{4-2}{2}=1'} label="x₁ = (4 − 2) / 2 = 1" /><MathFormula tex={'x_2=\\frac{4+2}{2}=3'} label="x₂ = (4 + 2) / 2 = 3" /></div>
+          <div className="root-stage-bip" key="bip-3"><ComputerMascot message="Получили два корня: 1 и 3. Так формула приводит нас к точкам пересечения графика с осью X." expression="encouraging" state="success" /></div>
+        </div> : null}
+      </div> : null}
       {state.revealed < 3 ? <button onClick={() => dispatch({ type: 'REVEAL' })}>Показать следующий шаг</button> : null}
       <aside className="math-reminder"><p>При D = 0 — один действительный корень:</p><MathFormula tex={'x=\\frac{-b}{2a}'} label="x = −b / (2a)" /><p>При D &lt; 0 действительных корней нет.</p></aside>
     </div> : null}
@@ -90,6 +104,7 @@ export function Lesson({ step, onNext, onBack }: Props) {
         <button type="submit">Подтвердить</button>
       </form>
     </div> : null}
+    </section>
 
     <div id="lesson-feedback" role="status" aria-live="polite" aria-atomic="true" className={`lesson-feedback ${feedbackCopy ? ready ? 'feedback-success' : 'feedback-warning' : ''}`}>
       {feedbackCopy ? <><strong>{ready ? 'БИП · Верно' : feedback === 'empty' ? 'БИП · Нужен ответ' : 'БИП · Попробуем ещё раз'}</strong><p className="visually-hidden">{feedbackCopy}</p><p>{ready ? 'Можно продолжить обучение.' : 'Исправь ответ и проверь ещё раз.'}</p></> : null}

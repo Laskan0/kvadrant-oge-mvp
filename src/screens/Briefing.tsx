@@ -11,7 +11,7 @@ export function Briefing({ step, onNext, onBack }: { step: number; onNext: () =>
   return <section className="briefing-content" aria-labelledby="briefing-title">
     <p className="eyebrow">Знакомство с экипажем · {step + 1} из {dialogue.length}</p>
     <h1 id="briefing-title">Перед стартом</h1>
-    <div className="briefing-dialogue" aria-live="polite" aria-atomic="true">
+    <div className="briefing-dialogue" key={step} aria-live="polite" aria-atomic="true">
       <ComputerMascot message={current.message} expression={current.expression} />
     </div>
     <nav className="actions briefing-actions" aria-label="Диалог с БИПом">

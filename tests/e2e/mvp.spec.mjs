@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright'
 import assert from 'node:assert/strict'
 import { completeBriefing } from './helpers.mjs'
 
-test('знакомство меняет выражение БИПа, а урок двигает его по экрану', async ({ page }) => {
+test('знакомство меняет выражение БИПа, а в уроке он остаётся рядом с объяснением', async ({ page }) => {
   await page.goto('/')
   const bip = page.locator('.computer-icon')
   await expect(page.locator('.briefing-dialogue [data-expression="friendly"]')).toBeVisible()
@@ -24,7 +24,8 @@ test('знакомство меняет выражение БИПа, а урок
   await page.getByRole('button', { name: 'Проверить коэффициенты' }).click()
   await page.getByRole('button', { name: 'Далее', exact: true }).click()
   const x1 = (await bip.boundingBox()).x
-  expect(Math.abs(x1 - x0)).toBeGreaterThan(40)
+  expect(Math.abs(x1 - x0)).toBeLessThan(2)
+  expect(await page.locator('.lesson-guide .computer p').count()).toBe(1)
 })
 
 test('приборная панель следует за космической сценой и складывается на мобильном экране', async ({ page }) => {
@@ -41,8 +42,14 @@ test('приборная панель следует за космической
   await page.getByRole('button', { name: 'Проверить D' }).click()
   await page.getByRole('button', { name: 'Далее', exact: true }).click()
   for (const c of [3, 4, 5]) await page.getByRole('button', { name: `c = ${c}`, exact: false }).click()
+  await expect(page.locator('.graph-learning-note')).toContainText('точки пересечения параболы с осью X')
   await page.getByRole('button', { name: 'Далее', exact: true }).click()
   for (let i = 0; i < 3; i++) await page.getByRole('button', { name: 'Показать следующий шаг' }).click()
+  await expect(page.locator('.root-stage-row').last()).toContainText('3. Получаем два значения')
+  await expect(page.locator('.root-stage-row').last().locator('.root-stage-bip')).toBeVisible()
+  const lastRootStep = await page.locator('.root-stage-row').last().locator('.root-step').boundingBox()
+  const lastRootBip = await page.locator('.root-stage-row').last().locator('.root-stage-bip').boundingBox()
+  if (page.viewportSize().width > 600) expect(lastRootBip.x).toBeGreaterThan(lastRootStep.x + lastRootStep.width)
   await page.getByRole('button', { name: 'Далее', exact: true }).click()
   await page.getByRole('radio', { name: 'D = 4; корни 1 и 3', exact: true }).check()
   await page.getByRole('button', { name: 'Подтвердить', exact: true }).click()
