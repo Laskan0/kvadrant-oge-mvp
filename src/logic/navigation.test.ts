@@ -4,7 +4,9 @@ import type { AppState } from './navigation'
 import { lessons } from '../data/lessons'
 
 function reachPractice(): AppState {
-  let state = appReducer(initialState, { type: 'START_LESSON' })
+  let state = initialState
+  for (let index = 0; index < 3; index++) state = appReducer(state, { type: 'BRIEFING_NEXT' })
+  state = appReducer(state, { type: 'START_LESSON' })
   for (let index = 0; index < lessons.length; index++) state = appReducer(state, { type: 'LESSON_NEXT' })
   return state
 }
@@ -24,6 +26,14 @@ function finishRoute(): AppState {
 }
 
 describe('навигация с математической проверкой', () => {
+  it('проводит через три реплики знакомства и позволяет вернуться к предыдущей', () => {
+    expect(initialState).toEqual({ screen: 'briefing', step: 0 })
+    const second = appReducer(initialState, { type: 'BRIEFING_NEXT' })
+    expect(second).toEqual({ screen: 'briefing', step: 1 })
+    expect(appReducer(second, { type: 'BRIEFING_BACK' })).toEqual(initialState)
+    const third = appReducer(appReducer(second, { type: 'BRIEFING_NEXT' }), { type: 'BRIEFING_NEXT' })
+    expect(appReducer(third, { type: 'BRIEFING_NEXT' })).toEqual({ screen: 'intro' })
+  })
   it('не принимает корни до D и не завершает несуществующий полёт', () => {
     const practice = reachPractice()
     expect(edit(practice, 'root1', '2')).toEqual(practice)
@@ -53,8 +63,9 @@ describe('навигация с математической проверкой'
     expect(appReducer(finish, { type: 'REPEAT_THEORY' })).toEqual({ screen: 'lesson', step: 0 })
   })
   it('не позволяет уйти назад за первый шаг урока', () => {
-    const first = appReducer(initialState, { type: 'START_LESSON' })
-    expect(appReducer(first, { type: 'LESSON_BACK' })).toEqual(first)
-    expect(appReducer(appReducer(first, { type: 'LESSON_NEXT' }), { type: 'LESSON_BACK' })).toEqual(first)
+    const first = appReducer(appReducer(appReducer(initialState, { type: 'BRIEFING_NEXT' }), { type: 'BRIEFING_NEXT' }), { type: 'BRIEFING_NEXT' })
+    const lesson = appReducer(first, { type: 'START_LESSON' })
+    expect(appReducer(lesson, { type: 'LESSON_BACK' })).toEqual(lesson)
+    expect(appReducer(appReducer(lesson, { type: 'LESSON_NEXT' }), { type: 'LESSON_BACK' })).toEqual(lesson)
   })
 })

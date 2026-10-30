@@ -286,3 +286,91 @@ button:disabled { cursor: not-allowed; background: #29445b; color: #a4bfd5; box-
   .route-layout-compact { display: inline; }
 }
 @media (prefers-reduced-motion: reduce) { .route-line-drawing { animation: none; } }
+
+/* Знакомство с экипажем и перемещение привычного маскота в учебном блоке. */
+.briefing-mode .space-scene { height: clamp(210px, 30vh, 300px); }
+.briefing-content { max-width: 850px; margin: 0 auto; }
+.briefing-content > .eyebrow { margin-bottom: 0; }
+.briefing-content h1 { margin-top: 4px; }
+.briefing-dialogue .computer { min-height: 190px; margin: 0; padding: 24px; gap: 22px; border: 1px solid #3b6681; border-radius: 12px; background: linear-gradient(110deg, #10263b, #0b1e31); }
+.briefing-dialogue .computer-icon { flex-basis: 116px; width: 116px; height: 116px; }
+.briefing-dialogue .computer p { max-width: none; flex: 1; padding: 18px 20px; border: 1px solid #28516c; border-radius: 9px; background: #081527; }
+.briefing-dialogue .computer strong { margin-bottom: 7px; }
+.briefing-actions { justify-content: space-between; align-items: center; }
+.briefing-next { min-width: 190px; display: inline-flex; justify-content: center; align-items: center; gap: 15px; background: var(--accent); }
+.briefing-next:hover { background: #ffd08f; }
+.bip-expression-friendly .computer-icon { animation: bip-friendly 3.2s ease-in-out infinite; }
+.bip-expression-thinking .computer-icon { transform: rotate(-3deg); }
+.bip-expression-encouraging .computer-icon { animation: bip-encouraging 2.8s ease-in-out infinite; }
+@keyframes bip-friendly { 50% { transform: translateY(-3px); } }
+@keyframes bip-encouraging { 50% { transform: translateY(-3px) rotate(2deg); } }
+.lesson-guide .computer { position: relative; display: block; min-height: 126px; margin: 12px 0 18px; pointer-events: none; }
+.lesson-guide .computer-icon { position: absolute; top: 0; left: var(--bip-left, 0%); width: 66px; height: 66px; transition: left .65s ease-in-out; animation: bip-friendly 3.2s ease-in-out infinite; }
+.lesson-guide .computer p { position: absolute; top: 76px; left: 0; width: 100%; max-width: none; padding: 10px 14px; border: 1px solid #28516c; border-radius: 8px; background: #0b1e31; }
+.lesson-guide-0 { --bip-left: 0%; }
+.lesson-guide-1 { --bip-left: 21%; }
+.lesson-guide-2 { --bip-left: 48%; }
+.lesson-guide-3 { --bip-left: 79%; }
+.lesson-guide-4 { --bip-left: 38%; }
+
+/* Нижняя приборная панель практики; верхняя сцена остаётся большой. */
+.practice-mode .space-scene { height: clamp(390px, 57vh, 650px); }
+.practice-mode .space-art { opacity: 1; }
+.cockpit-dashboard { display: grid; grid-template-columns: minmax(235px, .72fr) minmax(0, 1.8fr); gap: 18px; align-items: stretch; }
+.bip-comms, .cockpit-controls { min-width: 0; border: 1px solid #416a83; border-radius: 10px; background: linear-gradient(135deg, #142c43, #0b1e31); box-shadow: inset 0 0 0 3px #08152766; }
+.bip-comms { display: flex; flex-direction: column; padding: 12px; }
+.comms-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 3px 10px; border-bottom: 1px solid #31566e; color: #a9c6d8; font: 11px/1.4 "SFMono-Regular", Menlo, Consolas, monospace; }
+.comms-live { display: inline-flex; align-items: center; gap: 6px; color: var(--success); font-size: 10px; }
+.comms-live i { width: 7px; height: 7px; border-radius: 50%; background: var(--success); }
+.comms-screen { display: grid; place-items: center; flex: 1; min-height: 210px; margin-top: 10px; border: 1px solid #254c65; border-radius: 6px; background: radial-gradient(ellipse at 50% 25%, #173850, #081527 75%); }
+.comms-screen .computer { display: flex; flex-direction: column; align-items: center; width: 100%; margin: 0; padding: 14px; text-align: center; }
+.comms-screen .computer-icon { flex-basis: 104px; width: 104px; height: 104px; }
+.comms-screen .computer p { width: 100%; max-width: 320px; padding: 10px 12px; border: 1px solid #28516c; border-radius: 7px; background: #10263bcc; font-size: 13px; }
+.comms-screen .computer strong { margin-bottom: 3px; }
+.comms-caption { margin: 9px 2px 0; color: var(--muted); text-align: center; font: 10px/1.4 "SFMono-Regular", Menlo, Consolas, monospace; }
+.cockpit-controls { padding: 20px 22px; }
+.cockpit-kicker { margin: 0 0 6px; color: var(--navigation); font: 11px/1.5 "SFMono-Regular", Menlo, Consolas, monospace; letter-spacing: .06em; }
+.practice-heading > span { padding: 6px 9px; border: 1px solid #31566e; border-radius: 4px; font: 11px/1.4 "SFMono-Regular", Menlo, Consolas, monospace; }
+.practice-equation { margin: 10px 0 14px; padding: 10px 14px; border-left: 2px solid var(--accent); background: #08152766; }
+.practice-workspace { grid-template-columns: minmax(0, 1.25fr) minmax(170px, .8fr); gap: 18px; border-top: 1px solid #31566e; padding-top: 16px; }
+.practice-reference { padding-left: 17px; }
+.practice-actions { gap: 8px; }
+.practice-actions button { padding-inline: 14px; }
+@media (max-width: 850px) {
+  .cockpit-dashboard { grid-template-columns: minmax(190px, .65fr) minmax(0, 1.35fr); gap: 12px; }
+  .cockpit-controls { padding: 16px; }
+  .practice-workspace { grid-template-columns: 1fr; }
+  .practice-reference { border-left: 0; border-top: 1px solid var(--border); padding: 14px 0 0; }
+}
+@media (max-width: 640px) {
+  .briefing-mode .terminal { padding: 22px 16px; }
+  .briefing-dialogue .computer { min-height: 0; padding: 14px; gap: 12px; align-items: flex-start; }
+  .briefing-dialogue .computer-icon { flex-basis: 68px; width: 68px; height: 68px; }
+  .briefing-dialogue .computer p { padding: 12px; font-size: 14px; }
+  .briefing-actions { flex-direction: row; }
+  .briefing-actions > span { display: none; }
+  .briefing-actions button { width: auto; flex: 1; min-width: 0; }
+  .lesson-guide .computer { min-height: 122px; }
+  .lesson-guide .computer-icon { width: 58px; height: 58px; }
+  .lesson-guide-0 { --bip-left: 0%; }
+  .lesson-guide-1 { --bip-left: 19%; }
+  .lesson-guide-2 { --bip-left: 41%; }
+  .lesson-guide-3 { --bip-left: 70%; }
+  .lesson-guide-4 { --bip-left: 28%; }
+  .practice-mode .space-scene { height: clamp(320px, 48vh, 460px); }
+  .cockpit-dashboard { grid-template-columns: 1fr; }
+  .bip-comms { order: 0; }
+  .cockpit-controls { order: 1; padding: 14px; }
+  .comms-screen { min-height: 155px; }
+  .comms-screen .computer { flex-direction: row; text-align: left; }
+  .comms-screen .computer-icon { flex-basis: 70px; width: 70px; height: 70px; }
+  .comms-screen .computer p { font-size: 12px; }
+  .practice-heading h1 { font-size: 25px; }
+  .practice-workspace { gap: 14px; }
+  .ship-location-0 { transform: translate(600px, 210px); }
+  .ship-location-1 { transform: translate(650px, 210px); }
+  .ship-location-2 { transform: translate(700px, 210px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bip-expression-friendly .computer-icon, .bip-expression-encouraging .computer-icon, .lesson-guide .computer-icon { animation: none; }
+}

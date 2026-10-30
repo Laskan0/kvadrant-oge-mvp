@@ -10,6 +10,7 @@ export interface ProblemResult {
 }
 
 export type AppState =
+  | { screen: 'briefing'; step: number }
   | { screen: 'intro' }
   | { screen: 'lesson'; step: number }
   | { screen: 'practice'; problem: number; practice: PracticeState; results: ProblemResult[] }
@@ -17,6 +18,8 @@ export type AppState =
   | { screen: 'finish'; results: ProblemResult[] }
 
 export type AppAction =
+  | { type: 'BRIEFING_NEXT' }
+  | { type: 'BRIEFING_BACK' }
   | { type: 'START_LESSON' }
   | { type: 'LESSON_NEXT' }
   | { type: 'LESSON_BACK' }
@@ -25,7 +28,7 @@ export type AppAction =
   | { type: 'REPLAY_PRACTICE' }
   | { type: 'REPEAT_THEORY' }
 
-export const initialState: AppState = { screen: 'intro' }
+export const initialState: AppState = { screen: 'briefing', step: 0 }
 
 function startPractice(): AppState {
   return { screen: 'practice', problem: 0, practice: createPracticeState(), results: [] }
@@ -33,6 +36,11 @@ function startPractice(): AppState {
 
 export function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
+    case 'BRIEFING_NEXT':
+      if (state.screen !== 'briefing') return state
+      return state.step < 2 ? { screen: 'briefing', step: state.step + 1 } : { screen: 'intro' }
+    case 'BRIEFING_BACK':
+      return state.screen === 'briefing' && state.step > 0 ? { screen: 'briefing', step: state.step - 1 } : state
     case 'START_LESSON':
       return state.screen === 'intro' ? { screen: 'lesson', step: 0 } : state
     case 'LESSON_NEXT':

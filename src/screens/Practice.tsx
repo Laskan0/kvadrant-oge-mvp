@@ -23,12 +23,18 @@ export function Practice({ problemIndex, state, onAction }: Props) {
 
   return <div className="practice-content">
     <p className="eyebrow">Маршрут к планете · Участок {problemIndex + 1} из {problems.length}</p>
-    <div className="practice-heading"><h1>{problem.title}</h1><span>Участков пройдено: {problemIndex}/2</span></div>
-    <p className="formula practice-equation">{problem.equation}</p>
-    <div role="status" aria-live="polite" aria-atomic="true" id="practice-feedback">
-      <ComputerMascot message={message} state={invalid ? 'warning' : state.feedback === 'accepted' ? 'success' : 'neutral'} />
-    </div>
-    <div className="practice-workspace">
+    <div className="cockpit-dashboard">
+      <aside className="bip-comms" aria-label="Видеосвязь с БИПом">
+        <div className="comms-heading"><span>ВИДЕОСВЯЗЬ · БИП</span><span className="comms-live"><i /> НА СВЯЗИ</span></div>
+        <div className="comms-screen" role="status" aria-live="polite" aria-atomic="true" id="practice-feedback">
+          <ComputerMascot message={message} state={invalid ? 'warning' : state.feedback === 'accepted' ? 'success' : 'neutral'} />
+        </div>
+        <p className="comms-caption">Бортовой компьютер · канал 01</p>
+      </aside>
+      <section className="cockpit-controls" aria-label="Приборная панель расчёта">
+        <div className="practice-heading"><div><p className="cockpit-kicker">НАВИГАЦИОННЫЙ РАСЧЁТ</p><h1>{problem.title}</h1></div><span>Участок {problemIndex + 1}/{problems.length}</span></div>
+        <p className="formula practice-equation">{problem.equation}</p>
+        <div className="practice-workspace">
       <div>
         <p className="task-label">{discriminantStage ? 'Шаг 1 · Вычисли дискриминант' : 'Шаг 2 · Найди корни'}</p>
         {!discriminantStage ? <p className="accepted-discriminant">✓ D = {state.discriminant}</p> : null}
@@ -48,6 +54,8 @@ export function Practice({ problemIndex, state, onAction }: Props) {
         </form>
       </div>
       <aside className="practice-reference"><p className="task-label">Памятка</p><MathFormula tex={discriminantStage ? 'D=b^2-4ac' : 'x_{1,2}=\\frac{-b\\pm\\sqrt D}{2a}'} label={discriminantStage ? 'D = b² − 4ac' : 'x₁,₂ = (−b ± √D)/(2a)'} /><p>{discriminantStage ? 'Коэффициенты бери вместе со знаками.' : 'На 2a делится весь числитель.'}</p></aside>
+        </div>
+      </section>
     </div>
     {hintCount > 0 ? <aside className="practice-hints" aria-label="Подсказки"><h2>БИП подсказывает</h2><ol>{problem.hints[stage].slice(0, hintCount).map(hint => <li key={hint}>{hint}</li>)}</ol></aside> : null}
     <div className="solution-control">

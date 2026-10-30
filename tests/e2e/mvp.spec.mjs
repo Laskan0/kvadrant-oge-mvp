@@ -1,6 +1,68 @@
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import assert from 'node:assert/strict'
+import { completeBriefing } from './helpers.mjs'
+
+test('знакомство меняет выражение БИПа, а урок двигает его по экрану', async ({ page }) => {
+  await page.goto('/')
+  const bip = page.locator('.computer-icon')
+  await expect(page.locator('.briefing-dialogue [data-expression="friendly"]')).toBeVisible()
+  await page.getByRole('button', { name: 'Далее', exact: false }).click()
+  await expect(page.locator('.briefing-dialogue [data-expression="thinking"]')).toBeVisible()
+  await page.getByRole('button', { name: 'Далее', exact: false }).click()
+  await expect(page.locator('.briefing-dialogue [data-expression="encouraging"]')).toBeVisible()
+  await page.getByRole('button', { name: 'Назад', exact: true }).click()
+  await expect(page.locator('.briefing-dialogue [data-expression="thinking"]')).toBeVisible()
+  await page.getByRole('button', { name: 'Далее', exact: false }).click()
+  await page.getByRole('button', { name: 'Далее', exact: false }).click()
+  await page.getByRole('button', { name: 'Начать обучение' }).click()
+  await page.getByRole('heading', { name: 'Узнай коэффициенты' }).waitFor()
+  const x0 = (await bip.boundingBox()).x
+  await page.getByRole('group', { name: 'Коэффициент a' }).getByRole('radio', { name: '1', exact: true }).check()
+  await page.getByRole('group', { name: 'Коэффициент b' }).getByRole('radio', { name: '−4', exact: true }).check()
+  await page.getByRole('group', { name: 'Коэффициент c' }).getByRole('radio', { name: '3', exact: true }).check()
+  await page.getByRole('button', { name: 'Проверить коэффициенты' }).click()
+  await page.getByRole('button', { name: 'Далее', exact: true }).click()
+  const x1 = (await bip.boundingBox()).x
+  expect(Math.abs(x1 - x0)).toBeGreaterThan(40)
+})
+
+test('приборная панель следует за космической сценой и складывается на мобильном экране', async ({ page }) => {
+  await page.goto('/')
+  await completeBriefing(page)
+  await page.getByRole('button', { name: 'Начать обучение' }).click()
+  await page.getByRole('heading', { name: 'Узнай коэффициенты' }).waitFor()
+  await page.getByRole('group', { name: 'Коэффициент a' }).getByRole('radio', { name: '1', exact: true }).check()
+  await page.getByRole('group', { name: 'Коэффициент b' }).getByRole('radio', { name: '−4', exact: true }).check()
+  await page.getByRole('group', { name: 'Коэффициент c' }).getByRole('radio', { name: '3', exact: true }).check()
+  await page.getByRole('button', { name: 'Проверить коэффициенты' }).click()
+  await page.getByRole('button', { name: 'Далее', exact: true }).click()
+  await page.getByRole('textbox', { name: 'D = 16 − 12 =' }).fill('4')
+  await page.getByRole('button', { name: 'Проверить D' }).click()
+  await page.getByRole('button', { name: 'Далее', exact: true }).click()
+  for (const c of [3, 4, 5]) await page.getByRole('button', { name: `c = ${c}`, exact: false }).click()
+  await page.getByRole('button', { name: 'Далее', exact: true }).click()
+  for (let i = 0; i < 3; i++) await page.getByRole('button', { name: 'Показать следующий шаг' }).click()
+  await page.getByRole('button', { name: 'Далее', exact: true }).click()
+  await page.getByRole('radio', { name: 'D = 4; корни 1 и 3', exact: true }).check()
+  await page.getByRole('button', { name: 'Подтвердить', exact: true }).click()
+  await page.getByRole('button', { name: 'К маршруту', exact: true }).click()
+  await page.getByRole('heading', { name: 'Первая точка маршрута' }).waitFor()
+  const scene = await page.locator('.space-scene').boundingBox()
+  const dashboard = await page.locator('.cockpit-dashboard').boundingBox()
+  const comms = await page.locator('.bip-comms').boundingBox()
+  const controls = await page.locator('.cockpit-controls').boundingBox()
+  const ship = await page.locator('.ship').boundingBox()
+  expect(scene.height).toBeGreaterThanOrEqual(320)
+  expect(dashboard.y).toBeGreaterThanOrEqual(scene.y + scene.height)
+  if (page.viewportSize().width <= 640) {
+    expect(comms.y).toBeLessThan(controls.y)
+    expect(ship.x).toBeGreaterThanOrEqual(scene.x)
+    expect(ship.x + ship.width).toBeLessThanOrEqual(scene.x + scene.width)
+  }
+  else expect(comms.x).toBeLessThan(controls.x)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+})
 
 test('полный путь, ошибки, подсказки, разбор, повторы и доступность', async ({ page }) => {
   const scan = async () => {
@@ -15,6 +77,7 @@ test('полный путь, ошибки, подсказки, разбор, п�
   await page.goto('/')
   await expect(page).toHaveTitle('КВАДРАНТ — квадратные уравнения')
   await scan()
+  await completeBriefing(page)
   await page.getByRole('button',{name:'Начать обучение'}).click()
   await page.getByRole('heading',{name:'Узнай коэффициенты'}).waitFor()
   assert.ok(await next().isDisabled())

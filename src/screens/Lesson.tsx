@@ -23,7 +23,9 @@ export function Lesson({ step, onNext, onBack }: Props) {
       <progress aria-label="Прогресс урока" value={step + 1} max={lessons.length} />
     </div>
     <h1>{lesson.title}</h1>
-    <ComputerMascot message={feedbackCopy || lesson.description} state={ready ? 'success' : feedback === 'incorrect' || feedback === 'empty' ? 'warning' : 'neutral'} />
+    <div className={`lesson-guide lesson-guide-${step}`}>
+      <ComputerMascot message={feedbackCopy || lesson.description} state={ready ? 'success' : feedback === 'incorrect' || feedback === 'empty' ? 'warning' : 'neutral'} />
+    </div>
 
     {step === 0 ? <div className="lesson-task">
       <div className="coefficient-example">

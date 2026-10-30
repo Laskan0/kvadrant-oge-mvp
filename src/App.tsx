@@ -3,6 +3,7 @@ import { appReducer, initialState } from './logic/navigation'
 import { AnswerPanel } from './components/AnswerPanel'
 import { SpaceScene } from './components/SpaceScene'
 import { Intro } from './screens/Intro'
+import { Briefing } from './screens/Briefing'
 import { Flight } from './screens/Flight'
 import { Finish } from './screens/Finish'
 
@@ -13,7 +14,8 @@ const Practice = lazy(() => import('./screens/Practice').then(module => ({ defau
 export default function App() {
   const [state, dispatch] = useReducer(appReducer, initialState)
   const contentRef = useRef<HTMLElement>(null)
-  const locationKey = state.screen === 'lesson' ? `lesson-${state.step}`
+  const locationKey = state.screen === 'briefing' ? `briefing-${state.step}`
+    : state.screen === 'lesson' ? `lesson-${state.step}`
     : state.screen === 'practice' ? `practice-${state.problem}`
     : state.screen === 'flight' ? `flight-${state.problem}` : state.screen
 
@@ -30,15 +32,16 @@ export default function App() {
     : state.screen === 'practice' || state.screen === 'flight' ? state.problem : 0
 
   return (
-    <div className={`app-shell ${state.screen === 'lesson' ? 'lesson-mode' : ''}`}>
+    <div className={`app-shell ${state.screen === 'lesson' ? 'lesson-mode' : ''} ${state.screen === 'briefing' ? 'briefing-mode' : ''} ${state.screen === 'practice' ? 'practice-mode' : ''}`}>
       <div className="mission-frame">
       <header className="topbar">
         <span className="brand"><span className="brand-symbol" aria-hidden="true"><i /><i /><i /><i /></span>КВАДРАНТ</span>
         <span className="audience">9 класс / ОГЭ</span>
       </header>
-      <SpaceScene sector={completed} arrived={state.screen === 'finish'} learning={state.screen === 'intro' || state.screen === 'lesson'} flying={state.screen === 'flight'} />
+      <SpaceScene sector={completed} arrived={state.screen === 'finish'} learning={state.screen === 'briefing' || state.screen === 'intro' || state.screen === 'lesson'} flying={state.screen === 'flight'} />
       <main ref={contentRef} tabIndex={-1} id="main-content">
         <AnswerPanel tone={tone} flashKey={state.screen === 'practice' ? state.practice.attempts : 0}>
+          {state.screen === 'briefing' ? <Briefing step={state.step} onNext={() => dispatch({ type: 'BRIEFING_NEXT' })} onBack={() => dispatch({ type: 'BRIEFING_BACK' })} /> : null}
           {state.screen === 'intro' ? <Intro onStart={() => dispatch({ type: 'START_LESSON' })} /> : null}
           {state.screen === 'lesson' ? <Suspense fallback={<p role="status">Загружаю урок…</p>}><Lesson step={state.step} onNext={() => dispatch({ type: 'LESSON_NEXT' })} onBack={() => dispatch({ type: 'LESSON_BACK' })} /></Suspense> : null}
           {state.screen === 'practice' ? <Suspense fallback={<p role="status">Загружаю практику…</p>}><Practice problemIndex={state.problem} state={state.practice} onAction={action => dispatch({ type: 'PRACTICE', action })} /></Suspense> : null}

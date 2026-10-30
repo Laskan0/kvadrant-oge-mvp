@@ -5,7 +5,7 @@ interface Props { completed: number; flying: boolean }
 const layouts = [
   { name: 'wide', x: [205, 570, 790], y: 225 },
   { name: 'medium', x: [390, 590, 650], y: 225 },
-  { name: 'compact', x: [440, 600, 640], y: 210 },
+  { name: 'compact', x: [600, 650, 700], y: 210 },
 ] as const
 
 export function RouteTrace({ completed, flying }: Props) {
