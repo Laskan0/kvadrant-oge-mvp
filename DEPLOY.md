@@ -1,5 +1,7 @@
 # Публикация КВАДРАНТА
 
+Опубликованный сайт: [kvadrant-oge-mvp.pages.dev](https://kvadrant-oge-mvp.pages.dev/). Исходники: [Laskan0/kvadrant-oge-mvp](https://github.com/Laskan0/kvadrant-oge-mvp).
+
 Целевой хостинг — Cloudflare Pages со статической сборкой. Репозиторий — GitHub, основная ветка `main`.
 
 ## Проверка перед публикацией
