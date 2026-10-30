@@ -7,3 +7,9 @@ coverage/
 .env
 .env.*
 !.env.example
+
+# Локальные материалы отменённой записи; видео пользователь готовит сам.
+/docs/demo.webm
+/scripts/record-demo.mjs
+/playwright-report/
+/test-results/
