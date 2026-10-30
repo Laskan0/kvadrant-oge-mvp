@@ -1,5 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useReducer, useRef } from 'react'
-import { appReducer, initialState } from './logic/navigation'
+import { appReducer } from './logic/navigation'
+import { loadAppState, saveAppState } from './logic/persistence'
 import { AnswerPanel } from './components/AnswerPanel'
 import { SpaceScene } from './components/SpaceScene'
 import { Intro } from './screens/Intro'
@@ -12,7 +13,7 @@ const Lesson = lazy(() => import('./screens/Lesson').then(module => ({ default: 
 const Practice = lazy(() => import('./screens/Practice').then(module => ({ default: module.Practice })))
 
 export default function App() {
-  const [state, dispatch] = useReducer(appReducer, initialState)
+  const [state, dispatch] = useReducer(appReducer, undefined, loadAppState)
   const contentRef = useRef<HTMLElement>(null)
   const locationKey = state.screen === 'briefing' ? `briefing-${state.step}`
     : state.screen === 'lesson' ? `lesson-${state.step}`
@@ -22,6 +23,10 @@ export default function App() {
   useEffect(() => {
     contentRef.current?.focus({ preventScroll: true })
   }, [locationKey])
+
+  useEffect(() => {
+    saveAppState(state)
+  }, [state])
 
   const flightProblem = state.screen === 'flight' ? state.problem : -1
   const finishFlight = useCallback(() => dispatch({ type: 'FLIGHT_COMPLETE', problem: flightProblem }), [flightProblem])
@@ -36,22 +41,19 @@ export default function App() {
       <div className="mission-frame">
       <header className="topbar">
         <span className="brand"><span className="brand-symbol" aria-hidden="true"><i /><i /><i /><i /></span>КВАДРАНТ</span>
-        <span className="audience">9 класс / ОГЭ</span>
       </header>
       <SpaceScene sector={completed} arrived={state.screen === 'finish'} learning={state.screen === 'briefing' || state.screen === 'intro' || state.screen === 'lesson'} flying={state.screen === 'flight'} />
       <main ref={contentRef} tabIndex={-1} id="main-content">
         <AnswerPanel tone={tone} flashKey={state.screen === 'practice' ? state.practice.attempts : 0}>
           {state.screen === 'briefing' ? <Briefing step={state.step} onNext={() => dispatch({ type: 'BRIEFING_NEXT' })} onBack={() => dispatch({ type: 'BRIEFING_BACK' })} /> : null}
           {state.screen === 'intro' ? <Intro onStart={() => dispatch({ type: 'START_LESSON' })} /> : null}
-          {state.screen === 'lesson' ? <Suspense fallback={<p role="status">Загружаю урок…</p>}><Lesson step={state.step} onNext={() => dispatch({ type: 'LESSON_NEXT' })} onBack={() => dispatch({ type: 'LESSON_BACK' })} /></Suspense> : null}
+          {state.screen === 'lesson' ? <Suspense fallback={<p role="status">Загружаю урок…</p>}><Lesson step={state.step} state={state.lesson} onAction={action => dispatch({ type: 'LESSON_ACTION', action })} onNext={() => dispatch({ type: 'LESSON_NEXT' })} onBack={() => dispatch({ type: 'LESSON_BACK' })} /></Suspense> : null}
           {state.screen === 'practice' ? <Suspense fallback={<p role="status">Загружаю практику…</p>}><Practice problemIndex={state.problem} state={state.practice} onAction={action => dispatch({ type: 'PRACTICE', action })} /></Suspense> : null}
           {state.screen === 'flight' ? <Flight result={state.results[state.results.length - 1]} onComplete={finishFlight} /> : null}
           {state.screen === 'finish' ? <Finish results={state.results} onReplay={() => dispatch({ type: 'REPLAY_PRACTICE' })} onTheory={() => dispatch({ type: 'REPEAT_THEORY' })} /> : null}
         </AnswerPanel>
       </main>
       </div>
-      <footer>Бесплатно · Без регистрации</footer>
-
     </div>
   )
 }

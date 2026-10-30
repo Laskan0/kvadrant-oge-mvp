@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { appReducer, initialState } from './navigation'
 import type { AppState } from './navigation'
 import { lessons } from '../data/lessons'
+import { createLessonState } from './lesson'
 
 function reachPractice(): AppState {
   let state = initialState
@@ -60,12 +61,21 @@ describe('навигация с математической проверкой'
     const finish = finishRoute()
     expect(finish.screen).toBe('finish')
     expect(appReducer(finish, { type: 'REPLAY_PRACTICE' })).toEqual(reachPractice())
-    expect(appReducer(finish, { type: 'REPEAT_THEORY' })).toEqual({ screen: 'lesson', step: 0 })
+    expect(appReducer(finish, { type: 'REPEAT_THEORY' })).toEqual({ screen: 'lesson', step: 0, lesson: createLessonState() })
   })
   it('не позволяет уйти назад за первый шаг урока', () => {
     const first = appReducer(appReducer(appReducer(initialState, { type: 'BRIEFING_NEXT' }), { type: 'BRIEFING_NEXT' }), { type: 'BRIEFING_NEXT' })
     const lesson = appReducer(first, { type: 'START_LESSON' })
     expect(appReducer(lesson, { type: 'LESSON_BACK' })).toEqual(lesson)
     expect(appReducer(appReducer(lesson, { type: 'LESSON_NEXT' }), { type: 'LESSON_BACK' })).toEqual(lesson)
+  })
+
+  it('сохраняет ответы и раскрытые шаги урока в общем состоянии приложения', () => {
+    let state = appReducer({ screen: 'intro' }, { type: 'START_LESSON' })
+    state = appReducer(state, { type: 'LESSON_ACTION', action: { type: 'DISCRIMINANT', value: '4' } })
+    state = appReducer(state, { type: 'LESSON_ACTION', action: { type: 'REVEAL' } })
+    expect(state.screen === 'lesson' && state.lesson.discriminant).toBe('4')
+    const roots = appReducer({ ...state, screen: 'lesson', step: 3 } as AppState, { type: 'LESSON_ACTION', action: { type: 'REVEAL' } })
+    expect(roots.screen === 'lesson' && roots.lesson.revealed).toBe(2)
   })
 })

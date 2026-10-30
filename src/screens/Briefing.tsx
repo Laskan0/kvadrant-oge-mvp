@@ -2,7 +2,7 @@ import { ComputerMascot, type MascotExpression } from '../components/ComputerMas
 
 const dialogue: { title: string; message: string; expression: MascotExpression }[] = [
   { title: 'Привет, капитан!', message: 'Я БИП — бортовой компьютер. Буду сопровождать тебя в этой экспедиции.', expression: 'friendly' },
-  { title: 'Разберёмся вместе', message: 'Я помогу понять дискриминант, увидеть связь с графиком и найти корни уравнения.', expression: 'thinking' },
+  { title: 'Разберёмся вместе', message: 'Я помогу понять дискриминант, увидеть связь с графиком и найти корни уравнения.', expression: 'friendly' },
   { title: 'Можно ошибаться', message: 'Во время полёта ты будешь решать задачи, а я подскажу, какой шаг проверить. Готов начать?', expression: 'encouraging' },
 ]
 

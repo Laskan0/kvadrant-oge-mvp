@@ -5,23 +5,28 @@ import { completeBriefing } from './helpers.mjs'
 
 test('знакомство меняет выражение БИПа, а в уроке он остаётся рядом с объяснением', async ({ page }) => {
   await page.goto('/')
+  await expect(page.locator('.audience, footer')).toHaveCount(0)
   const bip = page.locator('.computer-icon')
   await expect(page.locator('.briefing-dialogue [data-expression="friendly"]')).toBeVisible()
   await page.getByRole('button', { name: 'Далее', exact: false }).click()
-  await expect(page.locator('.briefing-dialogue [data-expression="thinking"]')).toBeVisible()
+  await expect(page.locator('.briefing-dialogue [data-expression="friendly"]')).toBeVisible()
   await page.getByRole('button', { name: 'Далее', exact: false }).click()
   await expect(page.locator('.briefing-dialogue [data-expression="encouraging"]')).toBeVisible()
   await page.getByRole('button', { name: 'Назад', exact: true }).click()
-  await expect(page.locator('.briefing-dialogue [data-expression="thinking"]')).toBeVisible()
+  await expect(page.locator('.briefing-dialogue [data-expression="friendly"]')).toBeVisible()
   await page.getByRole('button', { name: 'Далее', exact: false }).click()
   await page.getByRole('button', { name: 'Далее', exact: false }).click()
   await page.getByRole('button', { name: 'Начать обучение' }).click()
   await page.getByRole('heading', { name: 'Узнай коэффициенты' }).waitFor()
+  await expect(page.getByText('Короткий урок, две задачи и маршрут к планете', { exact: true })).toHaveCount(0)
+  await expect(page.getByText('Можно ошибаться. Попробуй ещё раз — я помогу.', { exact: true })).toHaveCount(0)
   const x0 = (await bip.boundingBox()).x
   await page.getByRole('group', { name: 'Коэффициент a' }).getByRole('radio', { name: '1', exact: true }).check()
   await page.getByRole('group', { name: 'Коэффициент b' }).getByRole('radio', { name: '−4', exact: true }).check()
   await page.getByRole('group', { name: 'Коэффициент c' }).getByRole('radio', { name: '3', exact: true }).check()
   await page.getByRole('button', { name: 'Проверить коэффициенты' }).click()
+  await expect(page.locator('.lesson-feedback')).toHaveCount(0)
+  await expect(page.locator('.lesson-guide')).toContainText('Можно продолжить обучение')
   await page.getByRole('button', { name: 'Далее', exact: true }).click()
   const x1 = (await bip.boundingBox()).x
   expect(Math.abs(x1 - x0)).toBeLessThan(2)
@@ -161,6 +166,22 @@ test('полный путь, ошибки, подсказки, разбор, п�
   await checkD().click()
   assert.equal(await r1().count(),0)
   assert.equal(await page.locator('.terminal-warning').count(),1)
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  const flash = page.locator('.feedback-flash')
+  await expect(flash).toBeVisible()
+  const [flashBox, terminalBox, flashStyle] = await Promise.all([
+    flash.boundingBox(),
+    page.locator('.terminal').boundingBox(),
+    flash.evaluate(element => ({ duration: getComputedStyle(element).animationDuration, background: getComputedStyle(element).backgroundColor })),
+  ])
+  expect(Math.abs(flashBox.width - terminalBox.width)).toBeLessThan(1)
+  expect(Math.abs(flashBox.height - terminalBox.height)).toBeLessThan(1)
+  expect(flashStyle.duration).toBe('0.5s')
+  expect(flashStyle.background).toContain('228, 111, 118')
+  await page.reload()
+  await expect(page.getByRole('heading',{name:'Первая точка маршрута'})).toBeVisible()
+  await expect(d()).toHaveValue('-1')
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   await scan()
   await page.getByRole('button',{name:'Подсказка',exact:true}).click()
   await page.getByRole('button',{name:'Ещё подсказка',exact:true}).click()

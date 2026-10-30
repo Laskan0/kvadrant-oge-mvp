@@ -53,5 +53,7 @@ test('клавиатура, фокус, маленькая область про
   const motion = await page.locator('.ship-idle').evaluate(element => getComputedStyle(element).animationName)
   expect(motion).toBe('none')
   await page.reload()
-  await expect(page.getByRole('heading', { name: 'Перед стартом', exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Вычисли дискриминант', exact: true })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: 'D = 16 − 12 =' })).toHaveValue('4')
+  await expect(page.getByRole('button', { name: 'Далее', exact: true })).toBeEnabled()
 })

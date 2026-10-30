@@ -1,21 +1,20 @@
-import { useReducer } from 'react'
 import { calibrationChoices, coefficientChoices, lessonFeedback, lessons } from '../data/lessons'
 import { ComputerMascot } from '../components/ComputerMascot'
 import { EquationGraph } from '../components/EquationGraph'
 import { MathFormula } from '../components/MathFormula'
-import { createLessonState, lessonReady, lessonReducer } from '../logic/lesson'
-import type { GraphC } from '../logic/lesson'
+import { lessonReady } from '../logic/lesson'
+import type { GraphC, LessonAction, LessonState } from '../logic/lesson'
 
-interface Props { step: number; onNext: () => void; onBack: () => void }
+interface Props { step: number; state: LessonState; onAction: (action: LessonAction) => void; onNext: () => void; onBack: () => void }
 
-export function Lesson({ step, onNext, onBack }: Props) {
-  const [state, dispatch] = useReducer(lessonReducer, undefined, createLessonState)
+export function Lesson({ step, state, onAction, onNext, onBack }: Props) {
   const lesson = lessons[step]
   const ready = lessonReady(state, step)
   const feedback = state.feedback[step]
   const feedbackCopy = step === 0 || step === 1 || step === 4
     ? feedback === 'idle' ? '' : lessonFeedback[step][feedback]
-    : ready ? step === 2 ? 'Знак D подсказывает число действительных корней: положительный — два, нулевой — один, отрицательный — ни одного.' : 'Корни — 1 и 3. Порядок записи не важен.' : ''
+    : step === 2 && ready ? 'Знак D подсказывает число действительных корней: положительный — два, нулевой — один, отрицательный — ни одного.' : ''
+  const guideCopy = ready && feedbackCopy ? `${feedbackCopy} Можно продолжить обучение.` : feedbackCopy
 
   return <div className="lesson-content">
     <div className="lesson-heading">
@@ -24,8 +23,8 @@ export function Lesson({ step, onNext, onBack }: Props) {
     </div>
     <h1 className="lesson-title">{lesson.title}</h1>
     <section className="lesson-stage" key={step} aria-label={`Учебный шаг ${step + 1}`}>
-    {step !== 3 ? <div className={`lesson-guide lesson-guide-${step}`}>
-      <ComputerMascot message={feedbackCopy || lesson.description} state={ready ? 'success' : feedback === 'incorrect' || feedback === 'empty' ? 'warning' : 'neutral'} />
+    {step !== 3 ? <div id="lesson-feedback" role="status" aria-live="polite" aria-atomic="true" className={`lesson-guide lesson-guide-${step}`}>
+      <ComputerMascot message={guideCopy || lesson.description} state={ready ? 'success' : feedback === 'incorrect' || feedback === 'empty' ? 'warning' : 'neutral'} />
     </div> : null}
 
     {step === 0 ? <div className="lesson-task">
@@ -33,12 +32,12 @@ export function Lesson({ step, onNext, onBack }: Props) {
         <p><span className="coefficient-a">ax²</span> + <span className="coefficient-b">bx</span> + <span className="coefficient-c">c</span> = 0 <small> a ≠ 0</small></p>
         <p aria-label="x² − 4x + 3 = 0"><span className="coefficient-a">x²</span> <span className="coefficient-b">− 4x</span> <span className="coefficient-c">+ 3</span> = 0</p>
       </div>
-      <form onSubmit={event => { event.preventDefault(); dispatch({ type: 'CHECK', step: 0 }) }}>
+      <form onSubmit={event => { event.preventDefault(); onAction({ type: 'CHECK', step: 0 }) }}>
         <div className="coefficient-options">
           {coefficientChoices.map(group => <fieldset key={group.key} className={`coefficient-${group.key}`}>
             <legend>{group.label}</legend>
             <div className="choice-row">{group.values.map(value => <label className="radio-option" key={value}>
-              <input type="radio" name={group.key} value={value} checked={state.coefficients[group.key] === value} onChange={() => dispatch({ type: 'COEFFICIENT', key: group.key, value })} />
+              <input type="radio" name={group.key} value={value} checked={state.coefficients[group.key] === value} onChange={() => onAction({ type: 'COEFFICIENT', key: group.key, value })} />
               <span>{value.replace('-', '−')}</span>
             </label>)}</div>
           </fieldset>)}
@@ -53,16 +52,16 @@ export function Lesson({ step, onNext, onBack }: Props) {
         <MathFormula tex={'D=(-4)^2-4\\cdot 1\\cdot 3'} label="D = (−4)² − 4 · 1 · 3" />
       </div>
       <p className="calculation-note">Квадрат отрицательного числа положителен: (−4)² = 16.<br />А 4 · 1 · 3 = 12.</p>
-      <form className="discriminant-form" onSubmit={event => { event.preventDefault(); dispatch({ type: 'CHECK', step: 1 }) }}>
+      <form className="discriminant-form" onSubmit={event => { event.preventDefault(); onAction({ type: 'CHECK', step: 1 }) }}>
         <label htmlFor="lesson-d">D = 16 − 12 =</label>
-        <input id="lesson-d" type="text" inputMode="decimal" autoComplete="off" spellCheck={false} value={state.discriminant} onChange={event => dispatch({ type: 'DISCRIMINANT', value: event.target.value })} aria-invalid={feedback === 'incorrect' || undefined} aria-describedby="lesson-feedback" />
+        <input id="lesson-d" type="text" inputMode="decimal" autoComplete="off" spellCheck={false} value={state.discriminant} onChange={event => onAction({ type: 'DISCRIMINANT', value: event.target.value })} aria-invalid={feedback === 'incorrect' || undefined} aria-describedby="lesson-feedback" />
         <button type="submit">Проверить D</button>
       </form>
     </div> : null}
 
     {step === 2 ? <div className="lesson-task graph-task">
       <div className="graph-controls" role="group" aria-label="Выбор свободного коэффициента c">
-        {([3, 4, 5] as const).map((c: GraphC) => <button key={c} className="secondary graph-choice" aria-pressed={state.graphC === c} onClick={() => dispatch({ type: 'GRAPH', value: c })}>c = {c}<span>{state.visited.includes(c) ? 'Просмотрено' : 'Посмотреть'}</span></button>)}
+        {([3, 4, 5] as const).map((c: GraphC) => <button key={c} className="secondary graph-choice" aria-pressed={state.graphC === c} onClick={() => onAction({ type: 'GRAPH', value: c })}>c = {c}<span>{state.visited.includes(c) ? 'Просмотрено' : 'Посмотреть'}</span></button>)}
       </div>
       <EquationGraph c={state.graphC} />
       <p className="graph-learning-note">Меняй значение c и смотри на график: точки пересечения параболы с осью X подскажут, сколько действительных корней уравнения.</p>
@@ -85,19 +84,19 @@ export function Lesson({ step, onNext, onBack }: Props) {
         </div> : null}
         {state.revealed >= 3 ? <div className="root-stage-row" key="roots">
           <div className="root-step"><span>3. Получаем два значения</span><MathFormula tex={'x_1=\\frac{4-2}{2}=1'} label="x₁ = (4 − 2) / 2 = 1" /><MathFormula tex={'x_2=\\frac{4+2}{2}=3'} label="x₂ = (4 + 2) / 2 = 3" /></div>
-          <div className="root-stage-bip" key="bip-3"><ComputerMascot message="Получили два корня: 1 и 3. Так формула приводит нас к точкам пересечения графика с осью X." expression="encouraging" state="success" /></div>
+          <div className="root-stage-bip" key="bip-3"><ComputerMascot message="Получили два корня: 1 и 3. Так формула приводит нас к точкам пересечения графика с осью X. Можно продолжить обучение." expression="encouraging" state="success" /></div>
         </div> : null}
       </div> : null}
-      {state.revealed < 3 ? <button onClick={() => dispatch({ type: 'REVEAL' })}>Показать следующий шаг</button> : null}
+      {state.revealed < 3 ? <button onClick={() => onAction({ type: 'REVEAL' })}>Показать следующий шаг</button> : null}
       <aside className="math-reminder"><p>При D = 0 — один действительный корень:</p><MathFormula tex={'x=\\frac{-b}{2a}'} label="x = −b / (2a)" /><p>При D &lt; 0 действительных корней нет.</p></aside>
     </div> : null}
 
     {step === 4 ? <div className="lesson-task">
       <div className="formula-stack"><MathFormula tex={'x^2-4x+3=0'} label="x² − 4x + 3 = 0" /></div>
-      <form onSubmit={event => { event.preventDefault(); dispatch({ type: 'CHECK', step: 4 }) }}>
+      <form onSubmit={event => { event.preventDefault(); onAction({ type: 'CHECK', step: 4 }) }}>
         <fieldset className="calibration-options"><legend>Выбери результат</legend>
           {calibrationChoices.map((choice, index) => <label className="radio-option calibration-option" key={choice}>
-            <input type="radio" name="calibration" checked={state.calibration === index} onChange={() => dispatch({ type: 'CALIBRATION', value: index })} />
+            <input type="radio" name="calibration" checked={state.calibration === index} onChange={() => onAction({ type: 'CALIBRATION', value: index })} />
             <span>{choice}</span>
           </label>)}
         </fieldset>
@@ -106,9 +105,6 @@ export function Lesson({ step, onNext, onBack }: Props) {
     </div> : null}
     </section>
 
-    <div id="lesson-feedback" role="status" aria-live="polite" aria-atomic="true" className={`lesson-feedback ${feedbackCopy ? ready ? 'feedback-success' : 'feedback-warning' : ''}`}>
-      {feedbackCopy ? <><strong>{ready ? 'БИП · Верно' : feedback === 'empty' ? 'БИП · Нужен ответ' : 'БИП · Попробуем ещё раз'}</strong><p className="visually-hidden">{feedbackCopy}</p><p>{ready ? 'Можно продолжить обучение.' : 'Исправь ответ и проверь ещё раз.'}</p></> : null}
-    </div>
     <nav className="actions lesson-actions" aria-label="Переходы по уроку">
       {step > 0 ? <button className="secondary" onClick={onBack}>Назад</button> : null}
       <button disabled={!ready} onClick={() => { if (ready) onNext() }}>{step === lessons.length - 1 ? 'К маршруту' : 'Далее'}</button>
