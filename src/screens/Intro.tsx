@@ -4,7 +4,7 @@ export function Intro({ onStart }: { onStart: () => void }) {
   return <div className="intro-layout">
     <div className="intro-copy">
       <h1>КВАДРАНТ</h1>
-      <p className="lead">Научись решать квадратные уравнения через дискриминант</p>
+      <p className="lead">Тренажёр для 9 класса: научись решать квадратные уравнения через дискриминант</p>
     </div>
     <div className="intro-launch">
       <ComputerMascot message="Привет! Я БИП. Начнём с одного примера — я покажу каждый шаг." />

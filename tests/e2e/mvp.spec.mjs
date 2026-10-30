@@ -16,6 +16,7 @@ test('знакомство меняет выражение БИПа, а в ур�
   await expect(page.locator('.briefing-dialogue [data-expression="friendly"]')).toBeVisible()
   await page.getByRole('button', { name: 'Далее', exact: false }).click()
   await page.getByRole('button', { name: 'Далее', exact: false }).click()
+  await expect(page.getByText('Тренажёр для 9 класса: научись решать квадратные уравнения через дискриминант', { exact: true })).toBeVisible()
   await page.getByRole('button', { name: 'Начать обучение' }).click()
   await page.getByRole('heading', { name: 'Узнай коэффициенты' }).waitFor()
   await expect(page.getByText('Короткий урок, две задачи и маршрут к планете', { exact: true })).toHaveCount(0)
