@@ -1,6 +1,6 @@
 # КВАДРАНТ
 
-[Открыть MVP v1](https://kvadrant-oge-mvp.pages.dev/) · [Открыть preview v2](https://v2.kvadrant-oge-mvp.pages.dev/) · [Исходники](https://github.com/Laskan0/kvadrant-oge-mvp)
+[Открыть актуальную версию v2](https://quadrant-solver.pages.dev/) · [MVP v1](https://kvadrant-oge-mvp.pages.dev/) · [Исходники](https://github.com/Laskan0/kvadrant-oge-mvp)
 
 ![Стартовый экран КВАДРАНТА](./docs/screenshot.png)
 
@@ -65,7 +65,7 @@ SVG-график вычисляется по y = x² − 4x + c с одинак�
 - [Визуальная концепция и сверка](./design/DESIGN.md)
 - [Знакомство v2](./docs/screenshot-v2-briefing.png) · [Практика v2, десктоп](./docs/screenshot-v2-practice.png) · [Практика v2, мобильный экран](./docs/screenshot-v2-practice-mobile.png)
 
-Исходники: [Laskan0/kvadrant-oge-mvp](https://github.com/Laskan0/kvadrant-oge-mvp), ветка [v2](https://github.com/Laskan0/kvadrant-oge-mvp/tree/v2). Инструкция публикации: [DEPLOY.md](./DEPLOY.md). Production v1: [kvadrant-oge-mvp.pages.dev](https://kvadrant-oge-mvp.pages.dev/); preview v2: [открыть](https://v2.kvadrant-oge-mvp.pages.dev/). Видео пользователь готовит сам.
+Исходники: [Laskan0/kvadrant-oge-mvp](https://github.com/Laskan0/kvadrant-oge-mvp), ветка [v2](https://github.com/Laskan0/kvadrant-oge-mvp/tree/v2). Инструкция публикации: [DEPLOY.md](./DEPLOY.md). Актуальная версия v2: [quadrant-solver.pages.dev](https://quadrant-solver.pages.dev/); исходный MVP v1: [kvadrant-oge-mvp.pages.dev](https://kvadrant-oge-mvp.pages.dev/). Видео пользователь готовит сам.
 
 ## Сохранённые браузерные проверки
 
@@ -79,7 +79,7 @@ npm run test:e2e
 Для публичного сайта:
 
 ```sh
-KVADRANT_BASE_URL=https://kvadrant-oge-mvp.pages.dev npm run test:e2e
+KVADRANT_BASE_URL=https://quadrant-solver.pages.dev npm run test:e2e
 ```
 
 Реальный iPhone с экранной клавиатурой и ручное прохождение со скринридером не проверялись. Высота доступной области моделируется в тесте отдельно; это не эмуляция самой клавиатуры iOS. Запись видео пользователь готовит самостоятельно.

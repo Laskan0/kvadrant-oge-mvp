@@ -1,6 +1,6 @@
 # Публикация КВАДРАНТА
 
-Опубликованный сайт: [kvadrant-oge-mvp.pages.dev](https://kvadrant-oge-mvp.pages.dev/). Исходники: [Laskan0/kvadrant-oge-mvp](https://github.com/Laskan0/kvadrant-oge-mvp).
+Актуальный сайт v2: [quadrant-solver.pages.dev](https://quadrant-solver.pages.dev/). Исходный MVP v1 сохранён на [kvadrant-oge-mvp.pages.dev](https://kvadrant-oge-mvp.pages.dev/). Исходники: [Laskan0/kvadrant-oge-mvp](https://github.com/Laskan0/kvadrant-oge-mvp).
 
 Целевой хостинг — Cloudflare Pages со статической сборкой. Репозиторий — GitHub, основная ветка `main`.
 
@@ -40,3 +40,14 @@ npm run build
 - [Версии среды сборки и настройка Node.js](https://developers.cloudflare.com/pages/configuration/build-image/).
 
 На дату подготовки документа Cloudflare предлагает Workers для новых проектов. Здесь сохраняем Pages согласно согласованному ТЗ; backend и миграция не требуются.
+
+## Текущий проект v2
+
+Для актуального адреса создан отдельный Cloudflare Pages проект `quadrant-solver`, подключённый к этому же GitHub-репозиторию и ветке `v2`.
+
+- Production branch: `v2`.
+- Build command: `npm run build`.
+- Build output directory: `dist`.
+- Адрес: [quadrant-solver.pages.dev](https://quadrant-solver.pages.dev/).
+
+Поддомен `pages.dev` привязан к имени Pages-проекта. Поэтому новый адрес опубликован отдельным проектом; первоначальный проект оставлен доступным.
